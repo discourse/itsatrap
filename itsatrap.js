@@ -144,6 +144,13 @@
   var _REVERSE_MAP;
 
   /**
+   * holds a reference to global bindings
+   *
+   * @type {Object|undefined}
+   */
+  var _globalCallbacks = {};
+
+  /**
    * loop through the f keys, f1 to f19 and add them to the map
    * programatically
    */
@@ -1032,8 +1039,16 @@
    * @param {Element} element
    * @return {boolean}
    */
-  ItsATrap.prototype.stopCallback = function(e, element) {
+  ItsATrap.prototype.stopCallback = function(e, element, combo) {
     var self = this;
+
+    if (self.paused) {
+      return true;
+    }
+
+    if (_globalCallbacks[combo] || _globalCallbacks[sequence]) {
+      return false;
+    }
 
     // if the element has the class "itsatrap" then no need to stop
     if ((" " + element.className + " ").indexOf(" itsatrap ") > -1) {
@@ -1106,21 +1121,19 @@
     }
   };
 
-  var _globalCallbacks = {};
-  var _originalStopCallback = ItsATrap.prototype.stopCallback;
-
-  ItsATrap.prototype.stopCallback = function(e, element, combo, sequence) {
+  /**
+   * adds a pause and unpause method to ItsATrap
+   * this allows you to enable or disable keyboard shortcuts
+   * without having to reset ItsATrap and rebind everything
+   */
+  ItsATrap.prototype.pause = function() {
     var self = this;
+    self.paused = true;
+  };
 
-    if (self.paused) {
-      return true;
-    }
-
-    if (_globalCallbacks[combo] || _globalCallbacks[sequence]) {
-      return false;
-    }
-
-    return _originalStopCallback.call(self, e, element, combo);
+  ItsATrap.prototype.unpause = function() {
+    var self = this;
+    self.paused = false;
   };
 
   /**
