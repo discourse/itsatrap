@@ -1039,7 +1039,7 @@
    * @param {Element} element
    * @return {boolean}
    */
-  ItsATrap.prototype.stopCallback = function(e, element, combo) {
+  ItsATrap.prototype.stopCallback = function(e, element, combo, sequence) {
     var self = this;
 
     if (self.paused) {
