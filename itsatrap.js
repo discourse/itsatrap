@@ -1103,25 +1103,6 @@
   };
 
   /**
-   * Init the global itsatrap functions
-   *
-   * This method is needed to allow the global itsatrap functions to work
-   * now that itsatrap is a constructor function.
-   */
-  ItsATrap.init = function() {
-    var documentItsATrap = ItsATrap(document);
-    for (var method in documentItsATrap) {
-      if (method.charAt(0) !== "_") {
-        ItsATrap[method] = (function(method) {
-          return function() {
-            return documentItsATrap[method].apply(documentItsATrap, arguments);
-          };
-        })(method);
-      }
-    }
-  };
-
-  /**
    * adds a pause and unpause method to ItsATrap
    * this allows you to enable or disable keyboard shortcuts
    * without having to reset ItsATrap and rebind everything
@@ -1157,8 +1138,6 @@
 
     _globalCallbacks[keys] = true;
   };
-
-  ItsATrap.init();
 
   // expose itsatrap to the global object
   window.ItsATrap = ItsATrap;
