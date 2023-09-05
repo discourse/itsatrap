@@ -585,7 +585,9 @@ describe('ItsATrap.bind', function () {
 
     it('sequence timer resets', function () {
       var spy = sinon.spy();
-      var clock = sinon.useFakeTimers();
+      var clock = sinon.useFakeTimers({
+        shouldClearNativeTimers: true,
+      });
 
       new ItsATrap().bind('h a t', spy);
 
@@ -601,7 +603,9 @@ describe('ItsATrap.bind', function () {
 
     it('sequences timeout', function () {
       var spy = sinon.spy();
-      var clock = sinon.useFakeTimers();
+      var clock = sinon.useFakeTimers({
+        shouldClearNativeTimers: true,
+      });
 
       new ItsATrap().bind('g t', spy);
       KeyEvent.simulate('g'.charCodeAt(0), 71);
