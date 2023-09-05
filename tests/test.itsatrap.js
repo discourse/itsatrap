@@ -15,19 +15,12 @@ if (typeof window === 'undefined') {
 var ItsATrap = ItsATrap || require('./../itsatrap');
 var KeyEvent = KeyEvent || require('./libs/key-event');
 
-
-
-// Reset ItsATrap after each test
-afterEach(function () {
-  ItsATrap.reset();
-});
-
 describe('ItsATrap.bind', function () {
   describe('basic', function () {
     it('z key fires when pressing z', function () {
       var spy = sinon.spy();
 
-      ItsATrap.bind('z', spy);
+      new ItsATrap().bind('z', spy);
 
       KeyEvent.simulate('Z'.charCodeAt(0), 90);
 
@@ -41,7 +34,7 @@ describe('ItsATrap.bind', function () {
     it('z key fires from keydown', function () {
       var spy = sinon.spy();
 
-      ItsATrap.bind('z', spy, 'keydown');
+      new ItsATrap().bind('z', spy, 'keydown');
 
       KeyEvent.simulate('Z'.charCodeAt(0), 90);
 
@@ -55,7 +48,7 @@ describe('ItsATrap.bind', function () {
     it('z key does not fire when pressing b', function () {
       var spy = sinon.spy();
 
-      ItsATrap.bind('z', spy);
+      new ItsATrap().bind('z', spy);
 
       KeyEvent.simulate('B'.charCodeAt(0), 66);
 
@@ -68,7 +61,7 @@ describe('ItsATrap.bind', function () {
       var charCode;
       var modifier;
 
-      ItsATrap.bind('z', spy);
+      new ItsATrap().bind('z', spy);
 
       for (var i = 0; i < 4; i++) {
         modifier = modifiers[i];
@@ -98,7 +91,7 @@ describe('ItsATrap.bind', function () {
       shadowRoot.appendChild(inputElement);
       expect(shadowHost.shadowRoot).to.equal(shadowRoot, 'shadow root accessible');
 
-      ItsATrap.bind('z', spy);
+      new ItsATrap().bind('z', spy);
       KeyEvent.simulate('Z'.charCodeAt(0), 90, [], inputElement, 1, { shadowHost: shadowHost });
       document.body.removeChild(shadowHost);
       expect(spy.callCount).to.equal(0, 'callback should not have fired');
@@ -115,7 +108,7 @@ describe('ItsATrap.bind', function () {
       shadowRoot.appendChild(inputElement);
       expect(shadowHost.shadowRoot).to.equal(null, 'shadow root unaccessible');
 
-      ItsATrap.bind('z', spy);
+      new ItsATrap().bind('z', spy);
       KeyEvent.simulate('Z'.charCodeAt(0), 90, [], inputElement, 1, { shadowHost: shadowHost });
       document.body.removeChild(shadowHost);
       expect(spy.callCount).to.equal(1, 'callback should have fired once');
@@ -124,7 +117,7 @@ describe('ItsATrap.bind', function () {
     it('keyup events should fire', function() {
       var spy = sinon.spy();
 
-      ItsATrap.bind('z', spy, 'keyup');
+      new ItsATrap().bind('z', spy, 'keyup');
 
       KeyEvent.simulate('Z'.charCodeAt(0), 90);
 
@@ -138,7 +131,7 @@ describe('ItsATrap.bind', function () {
     it('keyup event for 0 should fire', function () {
       var spy = sinon.spy();
 
-      ItsATrap.bind('0', spy, 'keyup');
+      new ItsATrap().bind('0', spy, 'keyup');
 
       KeyEvent.simulate(0, 48);
 
@@ -148,8 +141,9 @@ describe('ItsATrap.bind', function () {
     it('rebinding a key overwrites the callback for that key', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
-      ItsATrap.bind('x', spy1);
-      ItsATrap.bind('x', spy2);
+      var itsatrap = new ItsATrap();
+      itsatrap.bind('x', spy1);
+      itsatrap.bind('x', spy2);
 
       KeyEvent.simulate('X'.charCodeAt(0), 88);
 
@@ -159,7 +153,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding an array of keys', function () {
       var spy = sinon.spy();
-      ItsATrap.bind(['a', 'b', 'c'], spy);
+      new ItsATrap().bind(['a', 'b', 'c'], spy);
 
       KeyEvent.simulate('A'.charCodeAt(0), 65);
       expect(spy.callCount).to.equal(1, 'new callback was called');
@@ -179,7 +173,8 @@ describe('ItsATrap.bind', function () {
         return false;
       });
 
-      ItsATrap.bind('command+s', spy);
+      var itsatrap = new ItsATrap();
+      itsatrap.bind('command+s', spy);
 
       KeyEvent.simulate('S'.charCodeAt(0), 83, ['meta']);
 
@@ -195,7 +190,7 @@ describe('ItsATrap.bind', function () {
 
       // try without return false
       spy = sinon.spy();
-      ItsATrap.bind('command+s', spy);
+      itsatrap.bind('command+s', spy);
       KeyEvent.simulate('S'.charCodeAt(0), 83, ['meta']);
 
       expect(spy.callCount).to.equal(1, 'callback should fire');
@@ -206,7 +201,7 @@ describe('ItsATrap.bind', function () {
 
     it('capslock key is ignored', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('a', spy);
+      new ItsATrap().bind('a', spy);
 
       KeyEvent.simulate('a'.charCodeAt(0), 65);
       expect(spy.callCount).to.equal(1, 'callback should fire for lowercase a');
@@ -224,7 +219,7 @@ describe('ItsATrap.bind', function () {
   describe('special characters', function () {
     it('binding special characters', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('*', spy);
+      new ItsATrap().bind('*', spy);
 
       KeyEvent.simulate('*'.charCodeAt(0), 56, ['shift']);
 
@@ -234,7 +229,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding special characters keyup', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('*', spy, 'keyup');
+      new ItsATrap().bind('*', spy, 'keyup');
 
       KeyEvent.simulate('*'.charCodeAt(0), 56, ['shift']);
 
@@ -244,7 +239,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding keys with no associated charCode', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('left', spy);
+      new ItsATrap().bind('left', spy);
 
       KeyEvent.simulate(0, 37);
 
@@ -254,7 +249,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding plus key alone should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('+', spy);
+      new ItsATrap().bind('+', spy);
 
       // fires for regular + character
       KeyEvent.simulate('+'.charCodeAt(0), 43);
@@ -268,7 +263,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding plus key as "plus" should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('plus', spy);
+      new ItsATrap().bind('plus', spy);
 
       // fires for regular + character
       KeyEvent.simulate('+'.charCodeAt(0), 43);
@@ -282,7 +277,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding to alt++ should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('alt++', spy);
+      new ItsATrap().bind('alt++', spy);
 
       KeyEvent.simulate('+'.charCodeAt(0), 43, ['alt']);
       expect(spy.callCount).to.equal(1, 'callback should fire');
@@ -291,7 +286,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding to alt+shift++ should work as well', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('alt+shift++', spy);
+      new ItsATrap().bind('alt+shift++', spy);
 
       KeyEvent.simulate('+'.charCodeAt(0), 43, ['shift', 'alt']);
       expect(spy.callCount).to.equal(1, 'callback should fire');
@@ -303,7 +298,7 @@ describe('ItsATrap.bind', function () {
   describe('combos with modifiers', function () {
     it('binding key combinations', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('command+o', spy);
+      new ItsATrap().bind('command+o', spy);
 
       KeyEvent.simulate('O'.charCodeAt(0), 79, ['meta']);
 
@@ -313,7 +308,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding key combos with multiple modifiers', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('command+shift+o', spy);
+      new ItsATrap().bind('command+shift+o', spy);
       KeyEvent.simulate('O'.charCodeAt(0), 79, ['meta']);
       expect(spy.callCount).to.equal(0, 'command+o callback should not fire');
 
@@ -324,7 +319,7 @@ describe('ItsATrap.bind', function () {
     it('should fire callback when ctrl+numpad 0 is pressed', function () {
       var spy = sinon.spy();
 
-      ItsATrap.bind('ctrl+0', spy);
+      new ItsATrap().bind('ctrl+0', spy);
 
       // numpad 0 keycode
       KeyEvent.simulate(96, 96, ['ctrl']);
@@ -338,7 +333,7 @@ describe('ItsATrap.bind', function () {
   describe('sequences', function () {
     it('binding sequences', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('g i', spy);
+      new ItsATrap().bind('g i', spy);
 
       KeyEvent.simulate('G'.charCodeAt(0), 71);
       expect(spy.callCount).to.equal(0, 'callback should not fire');
@@ -349,7 +344,7 @@ describe('ItsATrap.bind', function () {
 
     it('binding sequences with mixed types', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('g o enter', spy);
+      new ItsATrap().bind('g o enter', spy);
 
       KeyEvent.simulate('G'.charCodeAt(0), 71);
       expect(spy.callCount).to.equal(0, 'callback should not fire');
@@ -363,19 +358,20 @@ describe('ItsATrap.bind', function () {
 
     it('binding sequences starting with modifier keys', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('option enter', spy);
+      var itsatrap = new ItsATrap();
+      itsatrap.bind('option enter', spy);
       KeyEvent.simulate(0, 18, ['alt']);
       KeyEvent.simulate(0, 13);
       expect(spy.callCount).to.equal(1, 'callback should fire');
 
       spy = sinon.spy();
-      ItsATrap.bind('command enter', spy);
+      itsatrap.bind('command enter', spy);
       KeyEvent.simulate(0, 91, ['meta']);
       KeyEvent.simulate(0, 13);
       expect(spy.callCount).to.equal(1, 'callback should fire');
 
       spy = sinon.spy();
-      ItsATrap.bind('escape enter', spy);
+      itsatrap.bind('escape enter', spy);
       KeyEvent.simulate(0, 27);
       KeyEvent.simulate(0, 13);
       expect(spy.callCount).to.equal(1, 'callback should fire');
@@ -384,8 +380,9 @@ describe('ItsATrap.bind', function () {
     it('key within sequence should not fire', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
-      ItsATrap.bind('a', spy1);
-      ItsATrap.bind('c a t', spy2);
+      var itsatrap = new ItsATrap();
+      itsatrap.bind('a', spy1);
+      itsatrap.bind('c a t', spy2);
 
       KeyEvent.simulate('A'.charCodeAt(0), 65);
       expect(spy1.callCount).to.equal(1, 'callback 1 should fire');
@@ -401,9 +398,10 @@ describe('ItsATrap.bind', function () {
     it('keyup at end of sequence should not fire', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
+      var itsatrap = new ItsATrap();
 
-      ItsATrap.bind('t', spy1, 'keyup');
-      ItsATrap.bind('b a t', spy2);
+      itsatrap.bind('t', spy1, 'keyup');
+      itsatrap.bind('b a t', spy2);
 
       KeyEvent.simulate('B'.charCodeAt(0), 66);
       KeyEvent.simulate('A'.charCodeAt(0), 65);
@@ -415,7 +413,7 @@ describe('ItsATrap.bind', function () {
 
     it('keyup sequences should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('b a t', spy, 'keyup');
+      new ItsATrap().bind('b a t', spy, 'keyup');
 
       KeyEvent.simulate('b'.charCodeAt(0), 66);
       KeyEvent.simulate('a'.charCodeAt(0), 65);
@@ -428,7 +426,7 @@ describe('ItsATrap.bind', function () {
 
     it('extra spaces in sequences should be ignored', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('b   a  t', spy);
+      new ItsATrap().bind('b   a  t', spy);
 
       KeyEvent.simulate('b'.charCodeAt(0), 66);
       KeyEvent.simulate('a'.charCodeAt(0), 65);
@@ -440,9 +438,10 @@ describe('ItsATrap.bind', function () {
     it('modifiers and sequences play nicely', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
+      var itsatrap = new ItsATrap();
 
-      ItsATrap.bind('ctrl a', spy1);
-      ItsATrap.bind('ctrl+b', spy2);
+      itsatrap.bind('ctrl a', spy1);
+      itsatrap.bind('ctrl+b', spy2);
 
       KeyEvent.simulate(0, 17, ['ctrl']);
       KeyEvent.simulate('A'.charCodeAt(0), 65);
@@ -455,9 +454,10 @@ describe('ItsATrap.bind', function () {
     it('sequences that start the same work', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
+      var itsatrap = new ItsATrap();
 
-      ItsATrap.bind('g g l', spy2);
-      ItsATrap.bind('g g o', spy1);
+      itsatrap.bind('g g l', spy2);
+      itsatrap.bind('g g o', spy1);
 
       KeyEvent.simulate('g'.charCodeAt(0), 71);
       KeyEvent.simulate('g'.charCodeAt(0), 71);
@@ -477,9 +477,10 @@ describe('ItsATrap.bind', function () {
     it('sequences should not fire subsequences', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
+      var itsatrap = new ItsATrap();
 
-      ItsATrap.bind('a b c', spy1);
-      ItsATrap.bind('b c', spy2);
+      itsatrap.bind('a b c', spy1);
+      itsatrap.bind('b c', spy2);
 
       KeyEvent.simulate('A'.charCodeAt(0), 65);
       KeyEvent.simulate('B'.charCodeAt(0), 66);
@@ -490,8 +491,8 @@ describe('ItsATrap.bind', function () {
 
       spy1.resetHistory();
       spy2.resetHistory();
-      ItsATrap.bind('option b', spy1);
-      ItsATrap.bind('a option b', spy2);
+      itsatrap.bind('option b', spy1);
+      itsatrap.bind('a option b', spy2);
 
       KeyEvent.simulate('A'.charCodeAt(0), 65);
       KeyEvent.simulate(0, 18, ['alt']);
@@ -504,8 +505,10 @@ describe('ItsATrap.bind', function () {
     it('rebinding same sequence should override previous', function () {
       var spy1 = sinon.spy();
       var spy2 = sinon.spy();
-      ItsATrap.bind('a b c', spy1);
-      ItsATrap.bind('a b c', spy2);
+      var itsatrap = new ItsATrap();
+
+      itsatrap.bind('a b c', spy1);
+      itsatrap.bind('a b c', spy2);
 
       KeyEvent.simulate('a'.charCodeAt(0), 65);
       KeyEvent.simulate('b'.charCodeAt(0), 66);
@@ -517,7 +520,7 @@ describe('ItsATrap.bind', function () {
 
     it('broken sequences', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('h a t', spy);
+      new ItsATrap().bind('h a t', spy);
 
       KeyEvent.simulate('h'.charCodeAt(0), 72);
       KeyEvent.simulate('e'.charCodeAt(0), 69);
@@ -530,17 +533,18 @@ describe('ItsATrap.bind', function () {
 
     it('sequences containing combos should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('a ctrl+b', spy);
+      var itsatrap = new ItsATrap();
+      itsatrap.bind('a ctrl+b', spy);
 
       KeyEvent.simulate('a'.charCodeAt(0), 65);
       KeyEvent.simulate('B'.charCodeAt(0), 66, ['ctrl']);
 
       expect(spy.callCount).to.equal(1, '"a ctrl+b" should fire');
 
-      ItsATrap.unbind('a ctrl+b');
+      itsatrap.unbind('a ctrl+b');
 
       spy = sinon.spy();
-      ItsATrap.bind('ctrl+b a', spy);
+      itsatrap.bind('ctrl+b a', spy);
 
       KeyEvent.simulate('b'.charCodeAt(0), 66, ['ctrl']);
       KeyEvent.simulate('a'.charCodeAt(0), 65);
@@ -550,7 +554,7 @@ describe('ItsATrap.bind', function () {
 
     it('sequences starting with spacebar should work', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('a space b c', spy);
+      new ItsATrap().bind('a space b c', spy);
 
       KeyEvent.simulate('a'.charCodeAt(0), 65);
       KeyEvent.simulate(32, 32);
@@ -562,7 +566,7 @@ describe('ItsATrap.bind', function () {
 
     it('konami code', function () {
       var spy = sinon.spy();
-      ItsATrap.bind('up up down down left right left right b a enter', spy);
+      new ItsATrap().bind('up up down down left right left right b a enter', spy);
 
       KeyEvent.simulate(0, 38);
       KeyEvent.simulate(0, 38);
@@ -583,7 +587,7 @@ describe('ItsATrap.bind', function () {
       var spy = sinon.spy();
       var clock = sinon.useFakeTimers();
 
-      ItsATrap.bind('h a t', spy);
+      new ItsATrap().bind('h a t', spy);
 
       KeyEvent.simulate('h'.charCodeAt(0), 72);
       clock.tick(600);
@@ -599,7 +603,7 @@ describe('ItsATrap.bind', function () {
       var spy = sinon.spy();
       var clock = sinon.useFakeTimers();
 
-      ItsATrap.bind('g t', spy);
+      new ItsATrap().bind('g t', spy);
       KeyEvent.simulate('g'.charCodeAt(0), 71);
       clock.tick(1000);
       KeyEvent.simulate('t'.charCodeAt(0), 84);
@@ -635,7 +639,7 @@ describe('ItsATrap.bind', function () {
     function getCallback(key, keyCode, type, modifiers) {
       return function () {
         var spy = sinon.spy();
-        ItsATrap.bind(key, spy);
+        new ItsATrap().bind(key, spy);
 
         KeyEvent.simulate(key.charCodeAt(0), keyCode, modifiers);
         expect(spy.callCount).to.equal(1);
@@ -657,24 +661,26 @@ describe('ItsATrap.bind', function () {
 describe('ItsATrap.unbind', function () {
   it('unbind works', function () {
     var spy = sinon.spy();
-    ItsATrap.bind('a', spy);
+    var itsatrap = new ItsATrap();
+    itsatrap.bind('a', spy);
     KeyEvent.simulate('a'.charCodeAt(0), 65);
     expect(spy.callCount).to.equal(1, 'callback for a should fire');
 
-    ItsATrap.unbind('a');
+    itsatrap.unbind('a');
     KeyEvent.simulate('a'.charCodeAt(0), 65);
     expect(spy.callCount).to.equal(1, 'callback for a should not fire after unbind');
   });
 
   it('unbind accepts an array', function () {
     var spy = sinon.spy();
-    ItsATrap.bind(['a', 'b', 'c'], spy);
+    var itsatrap = new ItsATrap();
+    itsatrap.bind(['a', 'b', 'c'], spy);
     KeyEvent.simulate('a'.charCodeAt(0), 65);
     KeyEvent.simulate('b'.charCodeAt(0), 66);
     KeyEvent.simulate('c'.charCodeAt(0), 67);
     expect(spy.callCount).to.equal(3, 'callback should have fired 3 times');
 
-    ItsATrap.unbind(['a', 'b', 'c']);
+    itsatrap.unbind(['a', 'b', 'c']);
     KeyEvent.simulate('a'.charCodeAt(0), 65);
     KeyEvent.simulate('b'.charCodeAt(0), 66);
     KeyEvent.simulate('c'.charCodeAt(0), 67);
@@ -696,7 +702,7 @@ describe('wrapping a specific element', function () {
   it('z key fires when pressing z in the target element', function () {
     var spy = sinon.spy();
 
-    ItsATrap(form).bind('z', spy);
+    new ItsATrap(form).bind('z', spy);
 
     KeyEvent.simulate('Z'.charCodeAt(0), 90, [], form);
 
@@ -708,7 +714,7 @@ describe('wrapping a specific element', function () {
   it('z key fires when pressing z in a child of the target element', function () {
     var spy = sinon.spy();
 
-    ItsATrap(form).bind('z', spy);
+    new ItsATrap(form).bind('z', spy);
 
     KeyEvent.simulate('Z'.charCodeAt(0), 90, [], textarea);
 
@@ -720,7 +726,7 @@ describe('wrapping a specific element', function () {
   it('z key does not fire when pressing z outside the target element', function () {
     var spy = sinon.spy();
 
-    ItsATrap(textarea).bind('z', spy);
+    new ItsATrap(textarea).bind('z', spy);
 
     KeyEvent.simulate('Z'.charCodeAt(0), 90);
 
@@ -762,7 +768,7 @@ describe('Mouestrap.addKeycodes', function () {
       144: 'num',
     });
 
-    ItsATrap.bind('num', spy);
+    new ItsATrap().bind('num', spy);
 
     KeyEvent.simulate(144, 144);
     expect(spy.callCount).to.equal(1, 'callback should fire for num');
