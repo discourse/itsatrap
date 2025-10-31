@@ -20,26 +20,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
+      - uses: pnpm/action-setup@v4
 
-      - name: Yarn install
-        run: yarn install
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Pnpm install
+        run: pnpm install
 
       - name: JS tests
-        run: yarn test
+        run: pnpm test
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Publish package
-        uses: JS-DevTools/npm-publish@v1
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Publish package
+        run: pnpm publish -r
